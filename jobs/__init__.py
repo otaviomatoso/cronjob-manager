@@ -1,1 +1,1 @@
-from .cat import Cat
+from .cat import write_cat_to_file
