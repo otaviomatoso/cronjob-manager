@@ -1,7 +1,8 @@
-from jobs import Cat
+from jobs import write_cat_to_file
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 scheduler = BlockingScheduler()
-scheduler.add_job(func=Cat.write_to_file_job, trigger='interval', seconds=5)
-scheduler.start()
+if __name__ == '__main__':
+    scheduler.add_job(func=write_cat_to_file, trigger='interval', seconds=60)
+    scheduler.start()
