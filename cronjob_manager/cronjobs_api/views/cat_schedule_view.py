@@ -9,7 +9,7 @@ from cat_manager import manager
 class CatScheduleView(View):
 
     def post(self, request, *args, **kwargs):
-        delay = int(request.GET.get('delay', 3))
+        delay = int(request.GET.get('delay', 5))
         scheduler = BackgroundScheduler()
         next_run_date = datetime.now() + timedelta(seconds=delay)
         scheduler.add_job(func=write_cat_to_file, trigger='date', run_date=next_run_date)

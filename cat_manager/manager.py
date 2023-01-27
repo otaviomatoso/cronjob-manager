@@ -3,5 +3,5 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=write_cat_to_file, trigger='interval', seconds=10)
+scheduler.add_job(func=write_cat_to_file, trigger='interval', seconds=60)
 scheduler.start()
