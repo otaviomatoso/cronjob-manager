@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cronjobs_api.apps.CronjobsApiConfig',
-    # 'cronjobs.apps.CronjobsConfig',
 ]
 
 MIDDLEWARE = [
