@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cronjobs.apps.CronjobsConfig',
     'cronjobs_api.apps.CronjobsApiConfig',
+    'scheduler_engine',
+    'cat_manager',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +80,9 @@ WSGI_APPLICATION = 'cronjob_manager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'convoso-poc.sqlite3',
+        'PASSWORD': '',
+        'USERNAME': '',
     }
 }
 
@@ -106,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Sao_Paulo'
+TIME_ZONE = 'US/Pacific'
 
 USE_I18N = True
 
@@ -122,3 +127,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+JOBSTORES = {
+    'default': {
+        'TYPE': 'scheduler_engine.model_job_store.ModelJobStore',
+    }
+}
