@@ -16,7 +16,5 @@ class FilesView(View):
     def delete(self, request, *args, **kwargs):
         delete_files_response = File.objects.all().delete()
         deleted_amount = delete_files_response[0]
-        if deleted_amount > 0:
-            return JsonResponse({'message': f'{deleted_amount} file(s) deleted'}, status=HTTPStatus.NO_CONTENT)
+        return JsonResponse({'message': f'{deleted_amount} file(s) deleted'}, status=HTTPStatus.OK)
 
-        return JsonResponse({'message': 'There are no files to delete.'}, status=HTTPStatus.NOT_FOUND)
