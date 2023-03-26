@@ -18,11 +18,10 @@ class Job(models.Model):
             'id': self.id,
             'u_id': str(self.u_id),
             'key': self.key,
-            'created_at': datetime.strftime(self.created_at.astimezone(pytz.timezone('US/Pacific')),
+            'created_at': datetime.strftime(self.created_at.astimezone(pytz.timezone('UTC')),
                                             '%Y-%m-%d %H:%M:%S %Z%z'),
-            'next_run_time': datetime.strftime(self.next_run_time.astimezone(pytz.timezone('US/Pacific')),
+            'next_run_time': datetime.strftime(self.next_run_time.astimezone(pytz.timezone('UTC')),
                                                '%Y-%m-%d %H:%M:%S %Z%z'),
-            # 'job_state': self.job_state.hex(),
         }
 
     def _deserialize_job(self):
