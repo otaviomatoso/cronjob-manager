@@ -14,7 +14,7 @@ class JobView(View):
         return JsonResponse({'message': 'No job found with the given id'}, status=HTTPStatus.NOT_FOUND)
 
     def delete(self, request, *args, **kwargs):
-        if Job.objects.filter(id=(job_id := kwargs.get('pk'))).delete()[0] > 0:
+        if (job_id := kwargs.get('pk')) and Job.objects.filter(id=job_id).delete()[0] > 0:
             return JsonResponse({'message': f'Job with id {job_id} deleted'}, status=HTTPStatus.NO_CONTENT)
 
         return JsonResponse({'message': 'Job not found with the given id'}, status=HTTPStatus.NOT_FOUND)
