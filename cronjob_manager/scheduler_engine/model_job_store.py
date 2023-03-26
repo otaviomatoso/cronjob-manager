@@ -2,6 +2,7 @@ from apscheduler.job import Job as Job
 from apscheduler.jobstores.base import BaseJobStore, JobLookupError
 from cronjobs.models.job import Job as JobModel
 from django.core.exceptions import ObjectDoesNotExist
+from enums import JobStatus
 from typing import List
 import pickle
 import pytz
@@ -17,11 +18,11 @@ class ModelJobStore(BaseJobStore):
 
     def get_due_jobs(self, now) -> List[Job]:
         now_utc = now.astimezone(pytz.utc)
-        due_jobs = JobModel.objects.filter(next_run_time__lte=now_utc)
+        due_jobs = JobModel.objects.filter(next_run_time__lte=now_utc, status=JobStatus.SCHEDULED.value)
         return [self._deserialize_job(job) for job in due_jobs]
 
     def get_next_run_time(self):
-        if next_job := JobModel.objects.all().order_by('next_run_time').first():
+        if next_job := JobModel.objects.filter(status=JobStatus.SCHEDULED.value).order_by('next_run_time').first():
             return next_job.next_run_time
 
     def get_all_jobs(self):
@@ -35,16 +36,17 @@ class ModelJobStore(BaseJobStore):
     def remove_job(self, job_id):
         try:
             job = JobModel.objects.get(u_id=job_id)
-            job.delete()
+            job.status = JobStatus.DONE.value
+            job.save()
         except JobModel.DoesNotExist:
             raise JobLookupError("Job not found")
 
     def update_job(self, job):
         try:
-            job_model = JobModel.objects.get(u_id=job.id)
-            job_model.next_run_time = job.next_run_time.astimezone(pytz.utc)
-            # job_model.job_state = self._pickle(job.__getstate__())
+            job_model = JobModel.objects.get(u_id=job.id, status=JobStatus.SCHEDULED.value)
+            job_model.status = JobStatus.DONE.value
             job_model.save()
+            self.add_job(job)
         except JobModel.DoesNotExist:
             raise JobLookupError("Job not found")
 
@@ -58,7 +60,8 @@ class ModelJobStore(BaseJobStore):
         serialized_job = JobModel(u_id=job.id,
                                   key=job.kwargs.get('key', '').value,
                                   next_run_time=job.next_run_time.astimezone(pytz.utc),
-                                  job_state=self._pickle(job.__getstate__()))
+                                  job_state=self._pickle(job.__getstate__()),
+                                  status=JobStatus.SCHEDULED.value)
         return serialized_job
 
     def _deserialize_job(self, serialized_job: JobModel) -> Job:
