@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+FILES_LOCATION = BASE_DIR / 'cat_manager' / 'files'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -37,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cronjobs.apps.CronjobsConfig',
     'cronjobs_api.apps.CronjobsApiConfig',
+    'scheduler_engine',
+    'cat_manager',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +81,9 @@ WSGI_APPLICATION = 'cronjob_manager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'convoso-poc.sqlite3',
+        'PASSWORD': '',
+        'USERNAME': '',
     }
 }
 
@@ -106,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Sao_Paulo'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -122,3 +128,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+JOBSTORES = {
+    'default': {
+        'TYPE': 'scheduler_engine.model_job_store.ModelJobStore',
+    }
+}
+
+DEFAULT_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S %Z%z'
