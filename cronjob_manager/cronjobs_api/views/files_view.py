@@ -11,7 +11,7 @@ class FilesView(View):
             files_dict_list = [file.to_dict() for file in files]
             return JsonResponse(files_dict_list, status=HTTPStatus.OK, safe=False)
 
-        return JsonResponse({"message": "No file found"}, status=HTTPStatus.NOT_FOUND)
+        return JsonResponse({'message': 'No file found'}, status=HTTPStatus.NOT_FOUND)
 
     def delete(self, request, *args, **kwargs):
         delete_files_response = File.objects.all().delete()
