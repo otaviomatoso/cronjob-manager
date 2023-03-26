@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.conf import settings
 from django.db import models
 from typing import Dict
 
@@ -14,5 +15,5 @@ class File(models.Model):
             'id': self.id,
             'location': self.location,
             'name': self.name,
-            'created_at': datetime.strftime(self.created_at, '%Y-%m-%d %H:%M:%S'),
+            'created_at': datetime.strftime(self.created_at, settings.DEFAULT_DATETIME_FORMAT),
         }

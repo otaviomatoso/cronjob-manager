@@ -134,3 +134,5 @@ JOBSTORES = {
         'TYPE': 'scheduler_engine.model_job_store.ModelJobStore',
     }
 }
+
+DEFAULT_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S %Z%z'

@@ -1,5 +1,6 @@
 from typing import Dict
 from uuid import uuid4
+from django.conf import settings
 from django.db import models
 from datetime import datetime
 import pytz
@@ -19,9 +20,9 @@ class Job(models.Model):
             'u_id': str(self.u_id),
             'key': self.key,
             'created_at': datetime.strftime(self.created_at.astimezone(pytz.timezone('UTC')),
-                                            '%Y-%m-%d %H:%M:%S %Z%z'),
+                                            settings.DEFAULT_DATETIME_FORMAT),
             'next_run_time': datetime.strftime(self.next_run_time.astimezone(pytz.timezone('UTC')),
-                                               '%Y-%m-%d %H:%M:%S %Z%z'),
+                                               settings.DEFAULT_DATETIME_FORMAT),
         }
 
     def _deserialize_job(self):
