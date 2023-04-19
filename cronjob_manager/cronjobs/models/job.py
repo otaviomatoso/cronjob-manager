@@ -15,6 +15,7 @@ class Job(models.Model):
     next_run_time = models.DateTimeField()
     job_state = models.BinaryField()
     status = models.CharField(max_length=20, default=JobStatus.SCHEDULED.value)
+    result = models.TextField()
 
     def to_dict(self) -> Dict:
         return {
@@ -26,6 +27,7 @@ class Job(models.Model):
             'next_run_time': datetime.strftime(self.next_run_time.astimezone(pytz.timezone('UTC')),
                                                settings.DEFAULT_DATETIME_FORMAT),
             'status': self.status,
+            'result': self.result,
         }
 
     def _deserialize_job(self):

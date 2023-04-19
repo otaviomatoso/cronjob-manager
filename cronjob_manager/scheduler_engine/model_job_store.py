@@ -64,8 +64,7 @@ class ModelJobStore(BaseJobStore):
         serialized_job = JobModel(u_id=job.id,
                                   key=job.kwargs.get('key', '').value,
                                   next_run_time=job.next_run_time.astimezone(pytz.utc),
-                                  job_state=self._pickle(job.__getstate__()),
-                                  status=JobStatus.SCHEDULED.value)
+                                  job_state=self._pickle(job.__getstate__()))
         return serialized_job
 
     def _create_job_from_model(self, serialized_job: JobModel) -> Job:
