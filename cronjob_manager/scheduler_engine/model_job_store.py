@@ -14,7 +14,7 @@ class ModelJobStore(BaseJobStore):
         super(ModelJobStore, self).start(*args, **kwargs)
 
     def lookup_job(self, job_id):
-        return JobModel.objects.get(u_id=job_id)
+        return JobModel.objects.filter(u_id=job_id).first()
 
     def get_due_jobs(self, now) -> List[Job]:
         now_utc = now.astimezone(pytz.utc)
