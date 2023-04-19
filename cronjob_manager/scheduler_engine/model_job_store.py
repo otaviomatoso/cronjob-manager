@@ -41,7 +41,7 @@ class ModelJobStore(BaseJobStore):
 
     def remove_job(self, job_id):
         try:
-            job = JobModel.objects.get(u_id=job_id)
+            job = JobModel.objects.get(u_id=job_id, status=JobStatus.SCHEDULED.value)
             job.status = JobStatus.DONE.value
             job.save()
         except JobModel.DoesNotExist:
