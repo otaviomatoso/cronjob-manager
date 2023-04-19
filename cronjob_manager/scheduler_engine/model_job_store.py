@@ -1,3 +1,5 @@
+import uuid
+
 from apscheduler.job import Job as Job
 from apscheduler.jobstores.base import BaseJobStore, JobLookupError
 from cronjobs.models.job import Job as JobModel
@@ -48,11 +50,12 @@ class ModelJobStore(BaseJobStore):
     def update_job(self, job):
         try:
             job_model = JobModel.objects.get(u_id=job.id, status=JobStatus.SCHEDULED.value)
-            job_model.status = JobStatus.DONE.value
-            job_model.save()
-            self.add_job(job)
         except JobModel.DoesNotExist:
             raise JobLookupError("Job not found")
+        job_model.status = JobStatus.DONE.value
+        job_model.save()
+        job.id = uuid.uuid4()
+        self.add_job(job)
 
     def remove_all_jobs(self):
         try:
