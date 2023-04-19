@@ -19,7 +19,7 @@ class ModelJobStore(BaseJobStore):
     def get_due_jobs(self, now) -> List[Job]:
         now_utc = now.astimezone(pytz.utc)
         due_jobs = JobModel.objects.filter(next_run_time__lte=now_utc, status=JobStatus.SCHEDULED.value)
-        return [self._deserialize_job(job) for job in due_jobs]
+        return [self._create_job_from_model(job) for job in due_jobs]
 
     def get_next_run_time(self):
         if next_job := JobModel.objects.filter(status=JobStatus.SCHEDULED.value).order_by('next_run_time').first():
@@ -27,11 +27,15 @@ class ModelJobStore(BaseJobStore):
 
     def get_all_jobs(self):
         all_jobs = JobModel.objects.all()
-        return [self._deserialize_job(job) for job in all_jobs]
+        return [self._create_job_from_model(job) for job in all_jobs]
 
     def add_job(self, job: Job):
-        serialized_job = self._serialize_job(job)
-        serialized_job.save()
+        job_model = self._create_model_from_job(job)
+        job_model.save()
+        model_id = job_model.id
+        job.kwargs['model_id'] = model_id
+        job_model.job_state = self._pickle(job.__getstate__())
+        job_model.save()
 
     def remove_job(self, job_id):
         try:
@@ -56,7 +60,7 @@ class ModelJobStore(BaseJobStore):
         except ObjectDoesNotExist:
             pass
 
-    def _serialize_job(self, job: Job) -> JobModel:
+    def _create_model_from_job(self, job: Job) -> JobModel:
         serialized_job = JobModel(u_id=job.id,
                                   key=job.kwargs.get('key', '').value,
                                   next_run_time=job.next_run_time.astimezone(pytz.utc),
@@ -64,7 +68,7 @@ class ModelJobStore(BaseJobStore):
                                   status=JobStatus.SCHEDULED.value)
         return serialized_job
 
-    def _deserialize_job(self, serialized_job: JobModel) -> Job:
+    def _create_job_from_model(self, serialized_job: JobModel) -> Job:
         job_state = serialized_job.job_state
         job_state = self._unpickle(job_state)
         job_state['jobstore'] = self
