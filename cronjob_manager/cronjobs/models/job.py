@@ -13,7 +13,7 @@ class Job(models.Model):
     key = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     next_run_time = models.DateTimeField()
-    job_state = models.BinaryField()
+    job_state = models.BinaryField(null=True)
     status = models.CharField(max_length=20, default=JobStatus.SCHEDULED.value)
     result = models.TextField()
 
