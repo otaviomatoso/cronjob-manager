@@ -1,4 +1,3 @@
-from cat_manager.jobs import write_cat_to_file
 from cat_manager.manager import scheduler
 from datetime import datetime, timedelta
 from django.conf import settings
@@ -16,9 +15,8 @@ class CatScheduleView(View):
     def post(self, request, *args, **kwargs):
         delay = int(request.GET.get('delay', 5))
         run_date = datetime.now(pytz.utc) + timedelta(seconds=delay)
-        scheduler.add_job(func=write_cat_to_file, trigger='date', run_date=run_date,
-                          kwargs={'key': JobTypes.CAT, 'file_name': 'cat_file.txt'},
-                          misfire_grace_time=None)
+        scheduler.add_job(func='cat_manager.jobs.cat:write_cat_to_file', trigger='date', run_date=run_date,
+                          kwargs={'key': JobTypes.CAT, 'file_name': 'cat_file.txt'}, misfire_grace_time=None)
 
         run_date = run_date.strftime(settings.DEFAULT_DATETIME_FORMAT)
         print(f'[API] Will write cat to file at {run_date}')
